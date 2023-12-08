@@ -1,0 +1,52 @@
+version: "3.3"
+services:
+
+  trino:
+    hostname: trino
+    container_name: trino
+    environment:
+      - KEYSTORE_PATH=$KEYSTORE_PATH
+      - KEYSTORE_PASS=$KEYSTORE_PASS
+      - PASSWORD_FILE=$PASSWORD_FILE
+      - THRIFT_URL=$THRIFT_URL
+      - MINIO_ACCESS_KEY=$MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY=$MINIO_SECRET_KEY
+      - AWS_ENDPOINT=$AWS_ENDPOINT
+    volumes:
+      - target: /etc/trino
+        source: ./etc/trino
+        type: bind
+    image: trino:422.5
+    depends_on:
+      - metastore
+    ports:
+      - "${TRINO_PORT:-8081}:8080"
+      - "${TRINO_S_PORT:-8444}:8443"
+
+  metastore:
+    environment:
+      - STARTUP_SCRIPT=/apps/metastore.sh
+      - AWS_ACCESS_KEY=$MINIO_ACCESS_KEY
+      - AWS_SECRET_KEY=$MINIO_SECRET_KEY
+      - AWS_ENDPOINT=$AWS_ENDPOINT
+      - S3_PATH_STYLE=true
+      - METASTORE_DB_URL=$METASTORE_DB_URL
+      - METASTORE_DB_USERNAME=$METASTORE_DB_USERNAME
+      - METASTORE_DB_PASSWORD=$METASTORE_DB_PASSWORD
+      - METASTORE_MAX_DB_CONN_POOL_SIZE=4
+      - METASTORE_WAREHOUSE_DIR=$METASTORE_WAREHOUSE_DIR
+    image: hive-standalone-metastore:1.4
+    # entrypoint: /bin/bash
+    depends_on:
+      - metastoredb
+
+  metastoredb:
+    environment:
+      - PGPORT=$PGPORT
+      - PGUSER=$PGUSER
+      - PGPASSWORD=$PGPASSWORD
+    image: postgres:13
+    volumes:
+      - ./metastoredb://db-initialize-scripts
+    # entrypoint: /bin/bash      
+
