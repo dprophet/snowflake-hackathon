@@ -12,10 +12,18 @@ export PGPORT := $(shell jq -r '.PGPORT' config.json)
 export PGUSER := $(shell jq -r '.PGUSER' config.json)
 export PGPASSWORD := $(shell jq -r '.PGPASSWORD' config.json)
 export KEYSTORE_PATH := $(shell jq -r '.KEYSTORE_PATH' config.json)
-export KEYSTORE_PASS := $(shell jq -r '.keyStorePassword' etc/trino/certs/config.json)
+export KEYSTORE_PASS := $(shell jq -r '.KEYSTORE_PASSWORD' config.json)
 export TRINO_PORT := $(shell jq -r '.TRINO_PORT' config.json)
 export TRINO_S_PORT := $(shell jq -r '.TRINO_S_PORT' config.json)
 export PASSWORD_FILE := $(shell jq -r '.PASSWORD_FILE' config.json)
+export SNOWFLAKE_USER := $(shell jq -r '.SNOWFLAKE_USER' config.json)
+export SNOWFLAKE_PASS := $(shell jq -r '.SNOWFLAKE_PASS' config.json)
+export SNOWFLAKE_ACCOUNT := $(shell jq -r '.SNOWFLAKE_ACCOUNT' config.json)
+export SNOWFLAKE_URL := $(shell jq -r '.SNOWFLAKE_URL' config.json)
+export SNOWFLAKE_DATABASE := $(shell jq -r '.SNOWFLAKE_DATABASE' config.json)
+export SNOWFLAKE_ROLE := $(shell jq -r '.SNOWFLAKE_ROLE' config.json)
+export SNOWFLAKE_WAREHOUSE := $(shell jq -r '.SNOWFLAKE_WAREHOUSE' config.json)
+
 
 up:
 	docker-compose up | tee startup.txt

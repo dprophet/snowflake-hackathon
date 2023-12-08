@@ -12,11 +12,18 @@ services:
       - MINIO_ACCESS_KEY=$MINIO_ACCESS_KEY
       - MINIO_SECRET_KEY=$MINIO_SECRET_KEY
       - AWS_ENDPOINT=$AWS_ENDPOINT
+      - SNOWFLAKE_USER=$SNOWFLAKE_USER
+      - SNOWFLAKE_PASS=$SNOWFLAKE_PASS
+      - SNOWFLAKE_ACCOUNT=$SNOWFLAKE_ACCOUNT
+      - SNOWFLAKE_URL=$SNOWFLAKE_URL
+      - SNOWFLAKE_DATABASE=$SNOWFLAKE_DATABASE
+      - SNOWFLAKE_ROLE=$SNOWFLAKE_ROLE
+      - SNOWFLAKE_WAREHOUSE=$SNOWFLAKE_WAREHOUSE
     volumes:
       - target: /etc/trino
         source: ./etc/trino
         type: bind
-    image: trino:422.5
+    image: trinodb/trino:434
     depends_on:
       - metastore
     ports:
@@ -45,8 +52,10 @@ services:
       - PGPORT=$PGPORT
       - PGUSER=$PGUSER
       - PGPASSWORD=$PGPASSWORD
-    image: postgres:13
+      - POSTGRES_PASSWORD=$PGPASSWORD
+      - POSTGRES_USER=$PGUSER
+    image: postgres:13.13
     volumes:
-      - ./metastoredb://db-initialize-scripts
+      - ./metastoredb://docker-entrypoint-initdb.d
     # entrypoint: /bin/bash      
 
